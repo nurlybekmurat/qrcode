@@ -5,7 +5,6 @@ const CheckInPage = () => {
   const [name, setName] = useState('');
   const [isNameSaved, setIsNameSaved] = useState(false);
 
-  // Загружаем имя из localStorage при монтировании
   useEffect(() => {
     const storedName = localStorage.getItem('userName');
     if (storedName) {
@@ -14,7 +13,6 @@ const CheckInPage = () => {
     }
   }, []);
 
-  // Обработка сохранения имени
   const handleSaveName = () => {
     if (name.trim()) {
       localStorage.setItem('userName', name.trim());
@@ -24,7 +22,6 @@ const CheckInPage = () => {
     }
   };
 
-  // Обработка отправки запроса
   const handleCheckIn = async () => {
     try {
       const response = await axios.post('http://localhost:3001/check-in', { name });

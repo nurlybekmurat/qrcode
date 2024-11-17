@@ -8,7 +8,7 @@ const PORT = 3001;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors()); // Разрешение запросов из других источников
+app.use(cors()); // Разрешаем запросы из других источников
 
 // Подключение к базе данных SQLite
 const db = new sqlite3.Database('./database.db', (err) => {
@@ -23,34 +23,34 @@ const db = new sqlite3.Database('./database.db', (err) => {
 db.run(`
   CREATE TABLE IF NOT EXISTS attendance (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
+    key TEXT,
     time TEXT
   )
 `);
 
-// Обработка POST-запроса на check-in
-app.post('/check-in', (req, res) => {
-  const { name } = req.body;
-  if (!name) {
-    return res.status(400).json({ error: 'Name is required' });
+// Обработка POST-запроса на сканирование
+app.post('/scan', (req, res) => {
+  const { key } = req.body;
+  if (!key) {
+    return res.status(400).json({ error: 'Key is required' });
   }
 
   const time = new Date().toISOString();
 
   db.run(
-    `INSERT INTO attendance (name, time) VALUES (?, ?)`,
-    [name, time],
+    `INSERT INTO attendance (key, time) VALUES (?, ?)`,
+    [key, time],
     function (err) {
       if (err) {
-        console.error('Error inserting data:', err.message);
-        return res.status(500).json({ error: 'Failed to register' });
+        console.error('Error inserting scan data:', err.message);
+        return res.status(500).json({ error: 'Failed to record scan' });
       }
-      res.json({ message: 'Check-in successful', id: this.lastID });
+      res.json({ message: 'Scan recorded successfully', id: this.lastID });
     }
   );
 });
 
-// Эндпоинт для просмотра всех записей (только для отладки)
+// Эндпоинт для проверки записей
 app.get('/records', (req, res) => {
   db.all(`SELECT * FROM attendance`, [], (err, rows) => {
     if (err) {
